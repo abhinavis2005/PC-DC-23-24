@@ -9,7 +9,6 @@
 #include <fstream>
 #include <iostream>
 #include <ostream>
-#include <stdlib.h>
 
 #include <optional>
 #include <stack>
@@ -17,6 +16,7 @@
 
 bool is_digit(char i) { return '0' <= i && i <= '9'; }
 bool is_white_space(char i) { return i == ' '; }
+int divbyzero=0;
 
 int precedence(char i) {
   // assigns numbers or 'priorities' to operations based on which they are
@@ -40,10 +40,13 @@ int apply_operator(int operand1, int operand2, char arthOperator) {
   }
   else if (arthOperator=='/'){
     if (operand1==0){
+        divbyzero=1;
         std::cout<<"Division by zero" << std::endl;
+        val = 0;
     }
-    exit(0);
-    val = operand2/operand1;
+    else{
+        val = operand2/operand1;
+    }
   }
   else if (arthOperator=='+'){
     val = operand2+operand1;
@@ -81,13 +84,21 @@ int parse_arthematic_expression(std::string &&expression) {
   // ignore white spaces, write a function to construct number from digits
   // push number onto operandStack
   int n = expression.length();
+  
+  std::optional<std::string> number ;
   for (int i=0; i < n; i++){
     const char token=expression[i];
     if (is_digit(token)){
-        int inttoken=atoi(&token);
-        operandStack.push(inttoken);
+        if (!number.has_value()){
+            number = ""; 
+        }
+        number->append(1,token);
     }
     else if (!is_white_space(token)){
+      if (number.has_value()){
+        operandStack.push(std::stoi(*number));
+        number.reset();
+      }
       while(!operatorStack.empty()){
         if(precedence(token)<=precedence(operatorStack.top())){
             perform_one_operation(operandStack,operatorStack);
@@ -112,8 +123,11 @@ int main() {
   std::string line;
   while (std::getline(std::cin, line)) {
     // reading arthematic expression
+    divbyzero=0;
     int value = parse_arthematic_expression(std::move(line));
     // Print an error message for division by zero
-    std::cout << value << std::endl;
+    if (!divbyzero){
+        std::cout << value << std::endl;
+    }
   }
 }
