@@ -1,6 +1,6 @@
 // Hari Hara Naveen
 // Vaishnavi Rajesh
-
+// Abhinav I S
 // takes arthematic expression and solves it
 
 #include <algorithm>
@@ -43,6 +43,7 @@ int apply_operator(int operand1, int operand2, char arthOperator) {
         divbyzero=1;
         std::cout<<"Division by zero" << std::endl;
         val = 0;
+        //handle division by zero case
     }
     else{
         val = operand2/operand1;
@@ -78,14 +79,13 @@ int parse_arthematic_expression(std::string &&expression) {
 
   std::stack<char> operatorStack;
   std::stack<int> operandStack;
-  expression.append(1,'$');
-  //std::cout << expression << std::endl;
+  expression.append(1,'$');//dummy character
   // tokenize the elements of expression string.
   // ignore white spaces, write a function to construct number from digits
   // push number onto operandStack
   int n = expression.length();
   
-  std::optional<std::string> number ;
+  std::optional<std::string> number;//creating number from digits(string)
   for (int i=0; i < n; i++){
     const char token=expression[i];
     if (is_digit(token)){
@@ -115,7 +115,6 @@ int parse_arthematic_expression(std::string &&expression) {
   // if token is an operation, check the top element of operatorStack and call
   // perform_one_operation if needed. Finally, push operator onto operatorStack
 
-  // After iterating through all elements of input string,
   return operandStack.top();
 }
 
